@@ -1,0 +1,4 @@
+---
+ip_addr: 192.168.122.112/24
+index: index2.html
+mysql_conf: slave_db.conf

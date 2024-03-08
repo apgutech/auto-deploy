@@ -1,0 +1,6 @@
+#!/bin/bash
+
+tftp 192.168.122.200 -c get $1.gz /tmp/$1.gz
+gzip -d /tmp/$1.gz
+mysql test_db < /tmp/$1
+rm /tmp/$1

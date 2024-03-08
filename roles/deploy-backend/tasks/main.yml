@@ -1,0 +1,58 @@
+---
+# tasks file for roles/deploy-backend
+- name: Configure Netplan config
+  template:
+    src: netconf.yaml
+    dest: /etc/netplan/50-cloud-init.yaml
+  tags:
+  - depl-backend
+  - depl-all
+
+- name: Netplan Update
+  shell: 'netplan apply'
+  tags:
+  - depl-backend
+  - depl-all
+
+- name: Update repos and install servers
+  apt:
+    update_cache: yes
+    pkg:
+    - apache2
+    - mysql-server
+    - tftp-hpa
+    - prometheus-node-exporter
+    - sshpass
+  tags:
+  - depl-backend
+  - depl-all
+
+- name: Clone index.html
+  git:
+    repo: https://github.com/apgutech/test-site.git
+    dest: /tmp/site
+  tags:
+  - depl-backend
+  - depl-all
+
+- name:
+  shell: "mv /tmp/site/{{ index }} /var/www/html/index.html && chown www-data:www-data /var/www/html/index.html"
+  tags:
+  - depl-backend
+  - depl-all
+
+- name: Restart apache2
+  service:
+    name: apache2
+    state: restarted
+  tags:
+  - depl-backend
+  - depl-all
+
+#- name: Add backup script to 
+
+- name: Clean /tmp
+  shell: 'rm -rf /tmp/site'
+  tags:
+  - depl-backend
+  - depl-all

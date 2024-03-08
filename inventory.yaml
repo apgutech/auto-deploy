@@ -1,0 +1,16 @@
+[backend]
+backend01 ansible_host=192.168.122.111
+backend02 ansible_host=192.168.122.112
+
+[nginx]
+nginx01 ansible_host=192.168.122.101
+nginx02 ansible_host=192.168.122.102
+
+[all:children]
+backend
+nginx
+
+[all:vars]
+ansible_user=ubuntu
+ansible_password=ubuntu
+ansible_ssh_password=ubuntu

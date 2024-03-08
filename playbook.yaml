@@ -1,0 +1,16 @@
+---
+- hosts: nginx
+  become: yes
+  roles:
+    - deploy-nginx
+ 
+- hosts: backend
+  become: yes
+  roles:
+    - deploy-backend
+
+- hosts: backend
+  become: yes
+  roles:
+    - config-mysql
+ 

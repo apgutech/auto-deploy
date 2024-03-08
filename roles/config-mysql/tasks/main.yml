@@ -1,0 +1,61 @@
+---
+# tasks file for roles/config-mysql
+- name: Add config mysqld
+  template: 
+    src: {{ mysql_conf }}
+    dest: /etc/mysql/mysql.conf.d/mysqld.cnf
+  tag:
+  - db_conf
+
+- name: Add backup script
+  template:
+    src: db_backup
+    dest: /usr/bin/db_backup
+    mode: 777
+  tag:
+  - db_conf
+  when: ansible_host=backend02
+
+- name: Configuration cron
+  cron:
+    name: "backup db"
+    hour: "8"
+    job: db_backup 
+  tag:
+  - db_conf
+  when: ansible_host=backend02
+
+- name: Add recover script
+  template:
+    src: db_recover
+    dest: /usr/bin/db_recover
+    mode: 777
+  tag:
+  - db_conf
+  when: ansible_host=backend01
+
+- name: Create user and grant privileges
+  shell: |
+    mysql -e "create database test_db"
+    mysql -e "create user 'repl'@'%' identified by 'replTest'"
+    mysql -e "grant all on test_db.* to 'repl'@'%'"
+  tag:
+  - db_conf
+  when: ansible_host=backend01
+  ignore_error: true
+
+- name: Recover table from backup
+  shell: "db_recover {{ item }}"
+  loop: "{{ backup_name }}"
+  tag:
+  - table_recover
+
+- name: Configure replica
+  shell: |
+    mysql -e "create user 'repl'@'%' identified by '12345'"
+    mysql -e "grant replication slave on *.* to 'repl'@'%'"
+    mysql -e "change replication source to source_host='192.168.122.111', source_user='repl', source_password='12345', source_auto_position=1, get_source_public_key=1"
+    mysql -e "replica start"
+  tag:
+  - db_conf
+  when: ansible_host=backend02

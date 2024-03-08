@@ -1,0 +1,4 @@
+---
+vrrp_state: STANDBY
+vrrp_priority: 50
+ip_addr: 192.168.122.102/24

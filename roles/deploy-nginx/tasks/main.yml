@@ -1,0 +1,87 @@
+---
+# tasks file for roles/deploy-nginx
+- name: Configure Netplan config
+  template:
+    src: netconf.yaml
+    dest: /etc/netplan/50-cloud-init.yaml
+  tags:
+  - depl-nginx
+  - depl-all
+
+- name: Netplan Update
+  shell: 'netplan apply'
+  tags:
+  - depl-nginx
+  - depl-all
+
+- name: Update repos and install packages
+  apt:
+    update_cache: yes
+    pkg:
+    - nginx
+    - keepalived
+    - prometheus-node-exporter
+  tags:
+  - depl-nginx
+  - depl-all
+
+- name: Remove default available configs
+  ansible.builtin.file:
+    path: /etc/nginx/sites-available/default
+    state: absent
+  tags:
+  - depl-nginx
+  - depl-all
+
+- name: Remove default enabled configs
+  ansible.builtin.file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  tags:
+  - depl-nginx
+  - depl-all
+
+- name: Configure Keepalived
+  template:
+    src: keepalived.conf
+    dest: /etc/keepalived/keepalived.conf
+  tags:
+  - depl-nginx
+  - depl-all
+
+- name: Configure Nginx
+  template:
+    src: default.conf
+    dest: /etc/nginx/sites-available/site01.conf
+  tags:
+  - depl-nginx
+  - depl-all
+  - update-nginx
+
+- name: Create link nginx configuration
+  file:
+    src: "/etc/nginx/sites-available/site01.conf"
+    dest: "/etc/nginx/sites-enabled/site01.conf"
+    state: link
+  tags:
+  - depl-nginx
+  - depl-all
+  - update-nginx
+
+- name: Restart Keepalived
+  service:
+    name: keepalived
+    state: restarted
+  tags:
+  - depl-nginx
+  - depl-all
+
+- name: Restart Nginx
+  service:
+    state: restarted
+    name: nginx
+  tags:
+  - depl-nginx
+  - depl-all
+
+ 

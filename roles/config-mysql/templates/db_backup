@@ -1,0 +1,17 @@
+#!/bin/bash
+
+dump_time=$(date +"%d%m-%H%M")
+MYSQL='mysql --skip-column-names'
+$MYSQL -e "stop replica"
+for i in `$MYSQL -e "show databases like '%\_db'"`; do
+    TABLE=$($MYSQL -e "show tables from $i")
+    for s in $TABLE; do
+        mkdir $i
+        /usr/bin/mysqldump  --events --routines --master-data=2 $i $s | gzip -1 > $i/$s$dump_time.gz
+    done
+done
+$MYSQL -e "start replica"
+
+tftp 192.168.122.200 -c put $i/$s$dump_time.gz
+
+echo "Бекап базы данных прошёл успешно"
