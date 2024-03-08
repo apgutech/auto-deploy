@@ -35,6 +35,17 @@
 - name: Install a Filebeat package from the internet
   ansible.builtin.apt:
     deb: https://cdn.otus.ru/media/public/65/6d/filebeat_8.9.1_amd64-224190-656d53.deb
+  tags:
+  - depl-nginx
+  - depl-all
+
+- name: Configure filebeat
+  template: 
+    src: filebeat
+    dest: /etc/filebeat/filebeat.yml
+  tags:
+  - depl-nginx
+  - depl-all
 
 - name: Remove default available configs
   ansible.builtin.file:
