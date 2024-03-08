@@ -2,3 +2,4 @@
 vrrp_state: MASTER
 vrrp_priority: 100
 ip_addr: 192.168.122.101/24
+set_hostname: nginx01

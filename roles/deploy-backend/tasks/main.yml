@@ -1,5 +1,12 @@
 ---
 # tasks file for roles/deploy-backend
+- name: Set a hostname
+  ansible.builtin.hostname:
+    name: "{{ set_hostname }}"
+  tags:
+  - depl-backend
+  - depl-all
+
 - name: Configure Netplan config
   template:
     src: netconf.yaml
@@ -26,6 +33,10 @@
   tags:
   - depl-backend
   - depl-all
+
+- name: Install a Filebeat package from the internet
+  ansible.builtin.apt:
+    deb: https://cdn.otus.ru/media/public/65/6d/filebeat_8.9.1_amd64-224190-656d53.deb
 
 - name: Clone index.html
   git:

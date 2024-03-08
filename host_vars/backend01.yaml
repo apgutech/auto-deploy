@@ -2,3 +2,4 @@
 ip_addr: 192.168.122.111/24
 index: index1.html
 mysql_conf: master_db.conf
+set_hostname: backend01

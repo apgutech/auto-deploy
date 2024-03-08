@@ -1,30 +1,15 @@
-#!/bin/bash
-
-mysql -e "create database test_db"
-mysql -e "create user 'replTest'@'%' identified by '12345'"
-mysql -e "grant all privileges on *.* to 'repl'@'%' with grant option"
-mysql -e "flush privileges"
-
-mysql -e "
 use test_db
-create table table_var01 (
-    ID INT,
-    ID2 INT
-)
+create table table_var01 (ID INT,ID2 INT)
 insert into table_var01 (ID, ID2) values
 (1, 11),
 (2, 22),
 (3, 33),
 (4, 44),
 (5, 55);
-create table_var02 (
-    Int1 INT,
-    Int2 INT
-)
-insert into table_var01 (ID, ID2) values
+create table table_var02 (value1 INT,value2 INT)
+insert into table_var02 (value1, value2) values
 (101, 1100),
 (201, 2200),
 (301, 3300),
 (401, 4400),
 (501, 5500);
-"
