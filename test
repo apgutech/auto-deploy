@@ -13,3 +13,17 @@ insert into table_var02 (value1, value2) values
 (301, 3300),
 (401, 4400),
 (501, 5500);
+
+
+
+sudo ip a flush dev ens3
+sudo ip a a 192.168.122.101/24 dev ens3
+
+sudo ip a flush dev ens3
+sudo ip a a 192.168.122.102/24 dev ens3
+
+sudo ip a flush dev ens3
+sudo ip a a 192.168.122.111/24 dev ens3
+
+sudo ip a flush dev ens3
+sudo ip a a 192.168.122.112/24 dev ens3

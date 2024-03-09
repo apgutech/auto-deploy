@@ -47,6 +47,15 @@
   - depl-nginx
   - depl-all
 
+- name: Start filebeat
+  service:
+    name: filebeat
+    state: started
+    enabled: true
+  tags:
+  - depl-nginx
+  - depl-all
+
 - name: Remove default available configs
   ansible.builtin.file:
     path: /etc/nginx/sites-available/default
