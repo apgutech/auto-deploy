@@ -22,7 +22,7 @@ ansible-playbook -i inventory.yaml playbook.yaml -t db_conf
 #### Для восстановления таблицы или несколько таблиц, необходимо запустить:
 Имена указывать без .gz 
 ```
-ansible-playbook -i inventory.yaml playbook.yaml -t table_recover -e "backup_name=<название бекапа на tftp сервере>"
+ansible-playbook -i inventory.yaml playbook.yaml -t table_recover -e '{"backup_name": [<backup1>]}
 ```
 >В случае с восстановлением одной таблицы
 или
@@ -32,3 +32,5 @@ ansible-playbook -i inventory.yaml playbook.yaml -t table_recover -e '{"backup_n
 >В случае с восстановлением нескольких таблиц
 
 >В данном случае ansible playbook загрузит бекап(или несколько) с удалённого сервера (в нашем случае с помощью протокола scp), далее распаковывает и восстанавливает потаблично. 
+
+
