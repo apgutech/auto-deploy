@@ -8,8 +8,9 @@ for i in `$MYSQL -e "show databases like '%\_db'"`; do
     for s in $TABLE; do
         mkdir $i
         /usr/bin/mysqldump  --events --set-gtid-purged --routines --source-data=2 $i $s | gzip -1 > $i/$s$dump_time.gz
+        sshpass -pubuntu scp $i/$s$dump_time.gz ubuntu@192.168.122.200:/tftp
     done
 done
 $MYSQL -e "start replica"
 
-sshpass -pubuntu scp $i/$s$dump_time.gz ubuntu@192.168.122.200:/tftp
+
