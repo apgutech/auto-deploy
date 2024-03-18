@@ -1,0 +1,8 @@
+*filter
+:INPUT DROP [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+-A INPUT -i lo -j ACCEPT
+-A INPUT -m multiport -p tcp --dports 22,80,9100,3306 -m state --state NEW -j ACCEPT
+COMMIT

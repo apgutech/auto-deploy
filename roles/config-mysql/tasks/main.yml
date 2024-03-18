@@ -61,8 +61,18 @@
   when: inventory_hostname == 'backend02'
   ignore_errors: true
 
-- name: Recover table from backup
-  shell: "db_recover {{ item }}"
+- name: Copy backup
+  become: False
+  shell: "sshpass -p 'ubuntu' scp ubuntu@192.168.122.200:/home/ubuntu/backups/{{ item }}.gz /tmp"
   loop: "{{ backup_name }}"
   tags:
   - table_recover
+  when: inventory_hostname == 'backend01'
+
+- name: Recover table from backup
+  #shell: "db_recover {{ item }}"
+  shell: "bash /home/ubuntu/test_script {{ item }}"
+  loop: "{{ backup_name }}"
+  tags:
+  - table_recover
+  when: inventory_hostname == 'backend01'

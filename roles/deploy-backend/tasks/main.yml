@@ -7,19 +7,19 @@
   - depl-backend
   - depl-all
 
-- name: Configure Netplan config
-  template:
-    src: netconf.yaml
-    dest: /etc/netplan/50-cloud-init.yaml
-  tags:
-  - depl-backend
-  - depl-all
-
-- name: Netplan Update
-  shell: 'netplan apply'
-  tags:
-  - depl-backend
-  - depl-all
+#- name: Copy Netplan config
+#  template:
+#    src: netconf.yaml
+#    dest: /etc/netplan/50-cloud-init.yaml
+#  tags:
+#  - depl-backend
+#  - depl-all
+#
+#- name: Netplan Update
+#  shell: 'netplan apply'
+#  tags:
+#  - depl-backend
+#  - depl-all
 
 - name: Update repos and install servers
   apt:
@@ -30,6 +30,21 @@
     - tftp-hpa
     - prometheus-node-exporter
     - sshpass
+    - iptables-persistent
+  tags:
+  - depl-backend
+  - depl-all
+
+- name: Copy iptables
+  template:
+    src: iptables
+    dest: /etc/iptables/rules.v4
+  tags:
+  - depl-backend
+  - depl-all
+
+- name: Restore iptables
+  shell: 'netfilter-persistent reload'
   tags:
   - depl-backend
   - depl-all
@@ -41,10 +56,19 @@
   - depl-backend
   - depl-all
 
-- name: Configure filebeat
+- name: Copy filebeat
   template: 
     src: filebeat
     dest: /etc/filebeat/filebeat.yml
+  tags:
+  - depl-backend
+  - depl-all
+
+- name: Start filebeat
+  service:
+    name: filebeat
+    state: started
+    enabled: true
   tags:
   - depl-backend
   - depl-all

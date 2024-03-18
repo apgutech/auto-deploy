@@ -7,19 +7,19 @@
   - depl-nginx
   - depl-all
 
-- name: Configure Netplan config
-  template:
-    src: netconf.yaml
-    dest: /etc/netplan/50-cloud-init.yaml
-  tags:
-  - depl-nginx
-  - depl-all
-
-- name: Netplan Update
-  shell: 'netplan apply'
-  tags:
-  - depl-nginx
-  - depl-all
+#- name: Copy Netplan config
+#  template:
+#    src: netconf.yaml
+#    dest: /etc/netplan/50-cloud-init.yaml
+#  tags:
+#  - depl-nginx
+#  - depl-all
+#
+#- name: Netplan Update
+#  shell: 'netplan apply'
+#  tags:
+#  - depl-nginx
+#  - depl-all
 
 - name: Update repos and install packages
   apt:
@@ -28,6 +28,21 @@
     - nginx
     - keepalived
     - prometheus-node-exporter
+    - iptables-persistent
+  tags:
+  - depl-nginx
+  - depl-all
+
+- name: Copy iptables
+  template:
+    src: iptables
+    dest: /etc/iptables/rules.v4
+  tags:
+  - depl-nginx
+  - depl-all
+
+- name: Restore iptables
+  shell: 'netfilter-persistent reload'
   tags:
   - depl-nginx
   - depl-all
@@ -39,7 +54,7 @@
   - depl-nginx
   - depl-all
 
-- name: Configure filebeat
+- name: Template filebeat
   template: 
     src: filebeat
     dest: /etc/filebeat/filebeat.yml
@@ -72,7 +87,7 @@
   - depl-nginx
   - depl-all
 
-- name: Configure Keepalived
+- name: Copy Keepalived
   template:
     src: keepalived.conf
     dest: /etc/keepalived/keepalived.conf
@@ -80,7 +95,7 @@
   - depl-nginx
   - depl-all
 
-- name: Configure Nginx
+- name: Copy Nginx
   template:
     src: default.conf
     dest: /etc/nginx/sites-available/site01.conf
