@@ -7,7 +7,7 @@ for i in `$MYSQL -e "show databases like '%\_db'"`; do
     TABLE=$($MYSQL -e "show tables from $i")
     for s in $TABLE; do
         mkdir $i
-        /usr/bin/mysqldump  --events --set-gtid-purged --routines --master-data=2 $i $s | gzip -1 > $i/$s$dump_time.gz
+        /usr/bin/mysqldump  --events --set-gtid-purged --routines --source-data=2 $i $s | gzip -1 > $i/$s$dump_time.gz
     done
 done
 $MYSQL -e "start replica"
